@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"> <!-- ✅ needed for mobile -->
+<title>Funny Shorts Collection</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+    text-align: center;
+    margin: 0;
+  }
+  h1 { margin: 20px 0; }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Desktop: 4 per row */
+    gap: 20px;
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 10px;
+  }
+
+  /* ✅ Tablet & mobile: 2 per row */
+  @media (max-width: 768px) {
+    .gallery {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* ✅ Very tiny screens: 1 per row */
+  @media (max-width: 360px) {
+    .gallery {
+      grid-template-columns: 1fr;
+    }
+  }
+    
+    .grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px; /* space between items */
+}
+
+
+  .card {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* ✅ image 2 parts, details 1 part */
+    gap: 10px;
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    align-items: start;
+  }
+
+  .card img {
+    width: 100%;
+    height: auto;
+    max-height: 250px;
+    object-fit: contain;
+    background: #fafafa;
+    border-radius: 6px;
+  }
+
+  .info {
+    font-weight: bold;
+    font-size: 14px;
+    text-align: left;
+  }
+
+  .order-btn {
+    margin-top: 10px;
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-radius: 6px;
+    background: #28a745;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  /* ✅ On very small screens, stack image and details vertically */
+  @media (max-width: 480px) {
+    .card {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>Funny Shirts Collection</h1>
+
+<div class="gallery" id="gallery"></div>
+
+<script>
+async function loadShorts() {
+  const res = await fetch('fetch_fshirts.php'); // ✅ endpoint for shorts
+  const shorts = await res.json();
+  displayShorts(shorts);
+}
+
+function displayShorts(shorts) {
+  const gallery = document.getElementById("gallery");
+  gallery.innerHTML = "";
+  if (shorts.length === 0) {
+    gallery.innerHTML = "<p>No shorts available.</p>";
+    return;
+  }
+  shorts.forEach(short => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const img = document.createElement("img");
+    img.src = short.image;
+    img.alt = "Shorts Image";
+
+    const info = document.createElement("div");
+    info.className = "info";
+    info.innerHTML = `
+      <div>ID: ${short.id}</div>
+      <div>Size: ${short.size}</div>
+      <div>Cost: ₹${short.price}</div>
+      <div>About: ${short.about}</div>
+    `;
+
+    const btn = document.createElement("button");
+    btn.className = "order-btn";
+    btn.textContent = "Order Now";
+    btn.onclick = () => alert("Ordered Shorts ID: " + short.id);
+
+    // ✅ Put info + button together in right column
+    const rightCol = document.createElement("div");
+    rightCol.append(info, btn);
+
+    card.append(img, rightCol);
+    gallery.appendChild(card);
+  });
+}
+
+// Initial load
+loadShorts();
+</script>
+
+</body>
+</html>
+
+

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Lock viewport to avoid zoom or layout shifts -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Fashions of Markapuram</title>
+  <style>
+    :root {
+      --accent: #00ff88;
+      --card-bg: rgba(255,255,255,0.1);
+      --text: #ffffff;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://img.freepik.com/premium-vector/background-images-free-download-freepik_689361-61.jpg?w=740') center/cover no-repeat fixed;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text);
+    }
+
+    header {
+      background: rgba(0,0,0,0.6);
+      padding: 16px 20px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    header h1 {
+      font-size: 24px; /* Slightly smaller to fit mobile without wrapping */
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin: 0;
+      text-align: center;
+    }
+
+    .login-btn {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .login-btn button {
+      background-color: var(--accent);
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      color: #000;
+      transition: background 0.3s;
+    }
+    .login-btn button:hover { background-color: #00cc6e; }
+
+    /* Fixed-width container for consistent look across devices */
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      padding: 24px 16px;
+      box-sizing: border-box;
+    }
+
+    /* Force a desktop-like grid: always 2 columns on all screens */
+    .shop-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    /* Optional: keep desktop at 3 or 4 columns if you want */
+    @media (min-width: 1024px) {
+      .shop-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    @media (min-width: 1280px) {
+      .shop-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .shop-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      overflow: hidden;
+      text-align: center;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+      transition: transform 0.3s;
+    }
+    .shop-card:hover { transform: scale(1.03); }
+
+    /* Consistent image sizing using aspect-ratio */
+    .shop-card .thumb {
+      width: 100%;
+      aspect-ratio: 4/3;           /* Same proportion everywhere */
+      object-fit: cover;            /* No distortion */
+      display: block;
+      border-bottom: 2px solid var(--accent);
+      background-color: rgba(0,0,0,0.2); /* Fallback bg if image missing */
+    }
+
+    .shop-card h3 {
+      margin: 12px 0 8px;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      transition: color 0.3s, transform 0.3s;
+    }
+    .shop-card h3::after {
+      content: "";
+      display: block;
+      width: 40px;
+      height: 3px;
+      background: var(--accent);
+      margin: 8px auto 0;
+      border-radius: 2px;
+      transition: width 0.3s;
+    }
+    .shop-card:hover h3 { color: #ffffff; transform: scale(1.04); }
+    .shop-card:hover h3::after { width: 70px; }
+
+    /* Prevent mobile from switching to single column */
+    @media (max-width: 480px) {
+      header h1 { font-size: 20px; }
+      .login-btn button { padding: 8px 14px; font-size: 15px; }
+      .shop-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Welcome to Markapuram</h2>
+    <div class="login-btn">
+      <button onclick="window.location.href='login.html'">Login</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="shop-grid">
+      <a href="ownerpage.html" style="text-decoration: none;">
+  <div class="shop-card">
+    <img class="thumb" src="funny1.jpg" alt="Funny Shop"
+         onerror="this.src='placeholder.jpg'; this.alt='Image unavailable';">
+    <h3>Funny</h3>
+  </div>
+</a>
+<div class="shop-card">
+  <a href="sivaownerpage.html">
+    <img class="thumb" src="siva.jpg" alt="Siva Shop"
+         onerror="this.src='placeholder.jpg'; this.alt='Image unavailable';">
+  </a>
+  <h3>Siva</h3>
+</div>
+
+<div class="shop-card">
+  <a href="ragavendra.html">
+    <img class="thumb" src="ragavendra.jpg" alt="Ragavendra Shop"
+         onerror="this.src='placeholder.jpg'; this.alt='Image unavailable';">
+  </a>
+  <h3>Ragavendra</h3>
+</div>
+
+<div class="shop-card">
+  <a href="kishore.html">
+    <img class="thumb" src="kishore.jpg" alt="Kishore Shop"
+         onerror="this.src='placeholder.jpg'; this.alt='Image unavailable';">
+  </a>
+  <h3>Kishore</h3>
+</div>
+</body>
+</html>
