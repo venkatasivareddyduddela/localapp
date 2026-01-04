@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"> <!-- important for mobile -->
+<title>ragavendhra Pants Collection</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f0f0f0; text-align: center; margin: 0; }
+  h1 { margin: 20px 0; }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Desktop: 4 per row */
+    gap: 20px;
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 10px;
+  }
+
+  /* Mobile & tablet: 2 per row */
+  @media (max-width: 768px) {
+    .gallery {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .card { background: white; padding: 10px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+  .card img {
+    width: 100%;
+    height: auto;          /* responsive */
+    max-height: 250px;     /* cap on larger screens */
+    object-fit: contain;
+    background: #fafafa;
+    border-radius: 6px;
+  }
+  .info { margin-top: 8px; font-weight: bold; font-size: 14px; text-align: left; }
+  .order-btn {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background: #28a745;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Ragavendhra Pants Collection</h1>
+
+<div class="gallery" id="gallery"></div>
+
+<script>
+async function loadPants() {
+  const res = await fetch('fetch_rpants.php');
+  const pants = await res.json();
+  displayPants(pants);
+}
+
+function displayPants(pants) {
+  const gallery = document.getElementById("gallery");
+  gallery.innerHTML = "";
+  if (pants.length === 0) {
+    gallery.innerHTML = "<p>No pants available.</p>";
+    return;
+  }
+  pants.forEach(pant => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const img = document.createElement("img");
+    img.src = pant.image;
+    img.alt = "Pant Image";
+
+    const info = document.createElement("div");
+    info.className = "info";
+    info.innerHTML = `
+      <div>ID: ${pant.id}</div>
+      <div>Size: ${pant.size}</div>
+      <div>Cost: ₹${pant.price}</div>
+      <div>About: ${pant.about}</div>
+    `;
+
+    const btn = document.createElement("button");
+    btn.className = "order-btn";
+    btn.textContent = "Order Now";
+    btn.onclick = () => alert("Ordered Pant ID: " + pant.id);
+
+    card.append(img, info, btn);
+    gallery.appendChild(card);
+  });
+}
+
+// Initial load
+loadPants();
+</script>
+
+</body>
+</html>

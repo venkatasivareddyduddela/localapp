@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Own Shorts Collection</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #f0f0f0; margin: 0; padding: 0; }
+    h1 { margin-top: 20px; }
+    .search-area { display: flex; justify-content: center; gap: 10px; margin: 20px auto; max-width: 600px; }
+    .search-area input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
+    .search-area button { padding: 10px 16px; border: none; border-radius: 6px; background: #007bff; color: white; cursor: pointer; }
+    .search-area button:hover { background: #0056b3; }
+    .shorts-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1200px; margin: 20px auto; }
+    .shorts-card { background: #fff; padding: 10px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .shorts-card img { width: 100%; height: 260px; object-fit: contain; border-radius: 8px; background: #fafafa; cursor: pointer; }
+    .shorts-info { margin-top: 8px; font-size: 14px; font-weight: bold; }
+    .order-btn { margin-top: 10px; padding: 8px 14px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
+    .order-btn:hover { background: #218838; }
+  </style>
+</head>
+<body>
+
+  <h1>Own Shorts Collection</h1>
+
+  <!-- SEARCH BAR -->
+  <div class="search-area">
+    <input type="text" id="searchInput" placeholder="Search by Shorts ID (e.g. S123)">
+    <button type="button" id="searchBtn">Search</button>
+    <button type="button" id="showAllBtn">Show All</button>
+  </div>
+
+  <!-- UPLOAD FORM -->
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="image" id="uploadPhoto" accept="image/*" required>
+    <input type="text" name="shorts_id" placeholder="Shorts ID" required>
+    <input type="text" name="size" placeholder="Size" required>
+    <input type="text" name="price" placeholder="Price" required>
+    <input type="text" name="about" placeholder="Description">
+    <button type="submit">Upload Shorts</button>
+  </form>
+
+  <div class="shorts-gallery" id="gallery"></div>
+
+<script>
+const gallery = document.getElementById("gallery");
+const searchInput = document.getElementById("searchInput");
+const searchBtn = document.getElementById("searchBtn");
+const showAllBtn = document.getElementById("showAllBtn");
+const uploadForm = document.getElementById("uploadForm");
+
+// Fetch shorts from DB
+function loadShorts() {
+  fetch("fetch_fshorts.php")
+    .then(res => res.json())
+    .then(data => showShorts(data));
+}
+
+function showShorts(shorts) {
+  gallery.innerHTML = "";
+  if (!shorts || shorts.length === 0) {
+    gallery.innerHTML = `<p>No shorts to display.</p>`;
+    return;
+  }
+
+  shorts.forEach(short => {
+    const card = document.createElement("div");
+    card.className = "shorts-card";
+
+    const img = document.createElement("img");
+    img.src = short.image;
+    img.alt = short.short_id;
+    img.title = "Click to delete this shorts";
+    img.addEventListener("click", () => {
+      console.log("Deleting ID:", short.dbId); // Debug
+      if (confirm(`Delete Short ID: ${short.short_id}?`)) {
+        fetch("delete_fshorts.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: "id=" + short.dbId
+        })
+        .then(res => res.text())
+        .then(msg => {
+          alert(msg); // Show PHP response
+          loadShorts();
+        });
+      }
+    });
+
+    const info = document.createElement("div");
+    info.className = "shorts-info";
+    info.innerHTML = `
+      <div>ID: <b>${short.short_id}</b></div>
+      <div>Size: ${short.size} | Price: $${short.price}</div>
+      <div>About: ${short.about}</div>
+    `;
+
+    const orderBtn = document.createElement("button");
+    orderBtn.textContent = "Order Now";
+    orderBtn.className = "order-btn";
+    orderBtn.addEventListener("click", () => {
+      alert(`You ordered Shorts ID: ${short.short_id}`);
+    });
+
+    card.appendChild(img);
+    card.appendChild(info);
+    card.appendChild(orderBtn);
+    gallery.appendChild(card);
+  });
+}
+
+// Upload form
+uploadForm.addEventListener("submit", e => {
+  e.preventDefault();
+  const formData = new FormData(uploadForm);
+  fetch("upload_fshorts.php", { method: "POST", body: formData })
+    .then(res => res.text())
+    .then(msg => {
+      alert(msg);
+      uploadForm.reset();
+      loadShorts();
+    });
+});
+
+// Search
+function doSearch() {
+  const raw = searchInput.value.trim();
+  if (raw === "") return gallery.innerHTML = `<p>Please enter a Shorts ID.</p>`;
+  fetch("fetch_fshorts.php")
+    .then(res => res.json())
+    .then(data => {
+      const found = data.filter(s => s.short_id.toUpperCase() === raw.toUpperCase());
+      found.length ? showShorts(found) : gallery.innerHTML = `<p>No Shorts Found With ID "${raw}"</p>`;
+    });
+}
+
+searchBtn.addEventListener("click", doSearch);
+searchInput.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); doSearch(); } });
+showAllBtn.addEventListener("click", () => { searchInput.value = ""; loadShorts(); });
+
+// Initial load
+loadShorts();
+</script>
+
+</body>
+</html>
